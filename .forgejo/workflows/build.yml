@@ -1,0 +1,61 @@
+name: Build
+on:
+  push:
+  pull_request:
+
+jobs:
+  setup:
+    name: Setup
+    runs-on: kiku-server-light
+    container: node:24-bookworm
+    outputs:
+      projects: ${{ steps.set-versions.outputs.projects }}
+    steps:
+      - name: Install dependencies
+        run: |
+          apt-get update && apt-get install -y --no-install-recommends jq
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+      - name: Extract versions
+        id: set-versions
+        run: |
+          set -x
+          PROJECTS=$(jq -c '.versions | map(split(":") | { project: .[0], version: .[1] })' versions.json)
+          echo "projects=$PROJECTS" >> "$FORGEJO_OUTPUT"
+  build:
+    name: Build and Test
+    needs: setup
+    runs-on: kiku-server-heavy
+    container: node:24-bookworm
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.setup.outputs.projects) }}
+    env:
+      MATRIX_INSTANCE: ${{ matrix.project }}
+      MATRIX_VERSION: ${{ matrix.version }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+      - name: Build version
+        run: |
+          ./gradlew :${{ matrix.project }}:build --stacktrace --daemon
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-libs-${{ matrix.project }}
+          path: versions/${{ matrix.project }}/build/libs/*
+      - name: Run checks
+        run: |
+          ./gradlew :${{ matrix.project }}:check --stacktrace --daemon

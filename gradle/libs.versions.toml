@@ -1,0 +1,11 @@
+[versions]
+kotlin = "2.4.21"
+neoforged-moddev = "2.0.+"
+mod-publish-plugin = "2.2.+"
+
+[plugins]
+kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+stonecutter = { id = "dev.kikugie.stonecutter" }
+loomx = { id = "dev.kikugie.loom-back-compat" }
+neoforge = { id = "net.neoforged.moddev", version.ref = "neoforged-moddev" }
+mpp = { id = "me.modmuss50.mod-publish-plugin", version.ref = "mod-publish-plugin" }

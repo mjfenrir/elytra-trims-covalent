@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:smithing_transform",
+  "template": "#minecraft:banners",
+  "base": "#elytratrims:decoratable",
+  "addition": "minecraft:leather",
+  "result": {"id": "minecraft:elytra"}
+}

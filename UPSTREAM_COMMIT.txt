@@ -1,0 +1,5 @@
+repo=https://codeberg.org/KikuGie/elytra-trims
+branch=4.x-26.3
+commit=e66c57747919032836a3917e012b42d9d9ac76cd
+upstream_version=4.9.3
+note=This is the 4.9.3 version-bump commit (Changelogging, 2026-11-11 21:31 +01:00). The following commit 4eca659 only locks maven publishing tasks and does not change game code.

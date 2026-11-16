@@ -1,0 +1,48 @@
+--- a/src/main/kotlin/dev/kikugie/elytratrims/ETEntrypointImpl.kt
++++ b/src/main/kotlin/dev/kikugie/elytratrims/ETEntrypointImpl.kt
+@@ -32,6 +32,10 @@
+     registerDecorator(ETBadAppleRenderer)
+     registerDecorator(ETPatternsRenderer)
+     registerDecorator(ETTrimsRenderer)
++    // Covalent Iris fix: assign elytratrims:pipeline/elytra_translucent to Iris
++    // ENTITIES_TRANSLUCENT / SHADOW_ENTITIES when Iris is loaded. Upstream 4.9.3
++    // removed registerIrisCompat() on 2026-11-10 (commit 69643f9).
++    dev.kikugie.elytratrims.compat.CovalentIrisFix.register()
+ }
+ 
+ fun commonEP() {
+--- a/src/main/java/dev/kikugie/elytratrims/compat/CovalentIrisFix.java
++++ b/src/main/java/dev/kikugie/elytratrims/compat/CovalentIrisFix.java
+@@ -0,0 +1,32 @@
++package dev.kikugie.elytratrims.compat;
++
++import dev.kikugie.elytratrims.ModData;
++import org.slf4j.Logger;
++import org.slf4j.LoggerFactory;
++
++/** Covalent TEST patch: backport of upstream registerIrisCompat() (4.x-26.3) to 4.9.3/26.2. */
++public final class CovalentIrisFix {
++    private static final Logger LOG = LoggerFactory.getLogger("elytratrims/covalent-irisfix");
++    private CovalentIrisFix() {}
++
++    public static void register() {
++        try {
++            if (!ModData.INSTANCE.isModLoaded("iris")) return;
++            Impl.run();
++            LOG.info("[Covalent] Assigned elytratrims:pipeline/elytra_translucent to Iris ENTITIES_TRANSLUCENT / SHADOW_ENTITIES");
++        } catch (Throwable t) {
++            LOG.warn("[Covalent] Could not register Elytra Trims pipeline with Iris; trims may not render with shaders", t);
++        }
++    }
++
++    /** Separate class so Iris types are only resolved when Iris is present. */
++    private static final class Impl {
++        static void run() {
++            net.irisshaders.iris.api.v0.IrisApi api = net.irisshaders.iris.api.v0.IrisApi.getInstance();
++            api.assignPipeline(dev.kikugie.elytratrims.render.ElytraRenderPipelines.ELYTRA_TRANSLUCENT,
++                    net.irisshaders.iris.api.v0.IrisProgram.ENTITIES_TRANSLUCENT);
++            api.assignPipelineShadow(dev.kikugie.elytratrims.render.ElytraRenderPipelines.ELYTRA_TRANSLUCENT,
++                    net.irisshaders.iris.api.v0.IrisShadowProgram.SHADOW_ENTITIES);
++        }
++    }
++}

@@ -1,0 +1,22 @@
+package dev.kikugie.elytratrims.render
+
+import dev.kikugie.elytratrims.MINECRAFT
+import dev.kikugie.elytratrims.api.render.ETRenderParameters
+import dev.kikugie.elytratrims.item.ETItemFlag
+import dev.kikugie.elytratrims.item.has
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite
+import net.minecraft.client.renderer.texture.TextureAtlasSprite
+import net.minecraft.resources.Identifier
+
+val TextureAtlasSprite?.isMissing
+    get() = this == null || contents().name() == MissingTextureAtlasSprite.getLocation()
+
+val Identifier?.isMissing
+    get() = this == MissingTextureAtlasSprite.getLocation()
+
+fun Identifier.getSprite(identifier: Identifier, reporter: (Identifier) -> Unit): TextureAtlasSprite =
+    MINECRAFT.atlasManager.getAtlasOrThrow(this).getSprite(identifier).also { if (it.isMissing) reporter(identifier) }
+
+val ETRenderParameters.glowingLightCoords: Int
+    get() = if (stack has ETItemFlag.GLOW) 0xFF00FF else lightCoords
+

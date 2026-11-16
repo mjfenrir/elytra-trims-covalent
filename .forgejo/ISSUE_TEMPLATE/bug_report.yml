@@ -1,0 +1,70 @@
+name: Bug report
+description: Template for bug reports
+labels:
+  - bug
+body:
+  - type: dropdown
+    id: loader
+    attributes:
+      label: Mod loader
+      description: Which mod loader are you using?
+      options:
+        - Fabric
+        - Quilt
+        - Forge
+        - Neoforge
+    validations:
+      required: true
+  - type: input
+    id: minecraft
+    attributes:
+      label: Minecraft version
+      description: Which Minecraft version are you playing on?
+      placeholder: 1.20.1/1.21.8
+    validations:
+      required: true
+  - type: input
+    id: launcher
+    attributes:
+      label: Minecraft launcher
+      description: >-
+        What Minecraft launcher are you using? Some launchers that brand
+        themselves for optimisation or pvp may cause compatibility issues with
+        mods.
+      placeholder: Default/Prism/Modrinth
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Elytra Trims version
+      description: Which version of Elytra Trims are you using?
+      placeholder: 4.1.3/3.5.9
+    validations:
+      required: true
+  - type: input
+    id: logs
+    attributes:
+      label: Log file(s)
+      description: >-
+        Please attach a link to a **full log** and a crash log if applicable.
+        See [Uploading
+        Logs](https://docs.fabricmc.net/players/troubleshooting/uploading-logs)
+        and [Crash
+        Reports](https://docs.fabricmc.net/players/troubleshooting/crash-reports)
+        guides (**they are applicable to Forge/Neoforge too**).
+      placeholder: https://mclo.gs/...
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug description
+      description: >-
+        Use this section to describe the issue you are experiencing in as much
+        depth as possible. The description should explain what behavior you were
+        expecting, and why you believe the issue to be a bug. If the issue you
+        are reporting only occurs with specific mods installed, then provide the
+        name and version of each mod. Hint: If you have any screenshots, videos,
+        or other information that you feel is necessary to explain the issue,
+        you can attach them here.
